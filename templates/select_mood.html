@@ -1,0 +1,222 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wardrobe AI – Select Mood</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0e11;
+    --card: #17171c;
+    --border: #2a2a35;
+    --accent: #c8a96e;
+    --accent2: #e8c898;
+    --text: #f0ece4;
+    --muted: #888;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    background-image: radial-gradient(ellipse at 20% 20%, #1a1520 0%, transparent 60%),
+                      radial-gradient(ellipse at 80% 80%, #0d1520 0%, transparent 60%);
+  }
+  header {
+    padding: 2rem 3rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    color: var(--accent);
+  }
+  nav a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.9rem;
+    margin-left: 2rem;
+    transition: color 0.2s;
+  }
+  nav a:hover { color: var(--accent); }
+
+  .container {
+    max-width: 700px;
+    margin: 4rem auto;
+    padding: 0 2rem;
+  }
+  .page-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.4rem;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+   background: linear-gradient(135deg, var(--accent), var(--accent2));
+background-clip: text;
+-webkit-background-clip: text;
+color: transparent;
+    -webkit-text-fill-color: transparent;
+  }
+  .page-sub { color: var(--muted); margin-bottom: 2.5rem; font-size: 0.95rem; }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2.5rem;
+  }
+ 
+  .section-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin-bottom: 0.75rem;
+    margin-top: 1.5rem;
+  }
+  .section-label:first-of-type { margin-top: 0; }
+
+  .mood-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.6rem;
+    margin-bottom: 0.5rem;
+  }
+  .mood-btn {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 8px;
+    padding: 0.6rem 0.5rem;
+    cursor: pointer;
+    text-align: center;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.82rem;
+    transition: all 0.2s;
+  }
+  .mood-btn:hover, .mood-btn.active {
+    border-color: var(--accent);
+    background: rgba(200,169,110,0.1);
+    color: var(--accent);
+  }
+  .mood-btn .emoji { display: block; font-size: 1.4rem; margin-bottom: 0.2rem; }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+  .form-group select {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    padding-right: 2.5rem;
+  }
+  .form-group select:focus { border-color: var(--accent); }
+
+  input[name=mood] { display: none; }
+
+  .btn-find {
+    width: 100%;
+    margin-top: 2rem;
+    padding: 1rem;
+    background: linear-gradient(135deg, var(--accent), #a07840);
+    color: #0e0e11;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    transition: opacity 0.2s, transform 0.1s;
+  }
+  .btn-find:hover { opacity: 0.9; transform: translateY(-1px); }
+</style>
+</head>
+<body>
+<header>
+  <h1>✦ Wardrobe AI</h1>
+  <nav>
+    <a href="/">Upload</a>
+    <a href="/mood">Recommendations</a>
+  </nav>
+</header>
+
+<div class="container">
+  <h2 class="page-title">Find Your Outfit</h2>
+  <p class="page-sub">Tell us how you're feeling and where you're headed.</p>
+
+  <div class="card">
+    <form method="POST" action="/mood">
+      <input type="hidden" name="mood" id="moodInput" value="">
+
+      <p class="section-label">How are you feeling today?</p>
+      <div class="mood-grid">
+        <div class="mood-btn" onclick="setMood('happy', this)"><span class="emoji">😄</span>Happy</div>
+        <div class="mood-btn" onclick="setMood('calm', this)"><span class="emoji">😌</span>Calm</div>
+        <div class="mood-btn" onclick="setMood('confident', this)"><span class="emoji">💪</span>Confident</div>
+        <div class="mood-btn" onclick="setMood('romantic', this)"><span class="emoji">💕</span>Romantic</div>
+        <div class="mood-btn" onclick="setMood('energetic', this)"><span class="emoji">⚡</span>Energetic</div>
+        <div class="mood-btn" onclick="setMood('elegant', this)"><span class="emoji">✨</span>Elegant</div>
+        <div class="mood-btn" onclick="setMood('playful', this)"><span class="emoji">🎉</span>Playful</div>
+        <div class="mood-btn" onclick="setMood('sad', this)"><span class="emoji">😔</span>Sad</div>
+      </div>
+
+      <p class="section-label" style="margin-top: 2rem;">Where are you going?</p>
+      <div class="form-row">
+        <div class="form-group">
+          <select name="occasion" required>
+            <option value="">Occasion...</option>
+            <option value="casual">Casual / Everyday</option>
+            <option value="formal">Formal</option>
+            <option value="party">Party / Night Out</option>
+            <option value="work">Work / Office</option>
+            <option value="date">Date</option>
+            <option value="wedding">Wedding</option>
+            <option value="festive">Festive / Celebration</option>
+            <option value="outdoor">Outdoor / Sports</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <select name="wear_type" required>
+            <option value="">Wear Type...</option>
+            <option value="topwear">Topwear</option>
+            <option value="bottomwear">Bottomwear</option>
+            <option value="fullbody">Full Body / Dress</option>
+            <option value="outerwear">Outerwear</option>
+          </select>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-find">Find My Outfits →</button>
+    </form>
+  </div>
+</div>
+
+<script>
+function setMood(mood, el) {
+  document.getElementById('moodInput').value = mood;
+  document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+}
+</script>
+</body>
+</html>

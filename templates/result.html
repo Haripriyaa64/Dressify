@@ -1,0 +1,369 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wardrobe AI – Recommendations</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0e11;
+    --card: #17171c;
+    --border: #2a2a35;
+    --accent: #c8a96e;
+    --accent2: #e8c898;
+    --text: #f0ece4;
+    --muted: #888;
+    --success: #4caf7d;
+    --danger: #e05c5c;
+    --info: #6e9fd4;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    background-image: radial-gradient(ellipse at 20% 20%, #1a1520 0%, transparent 60%),
+                      radial-gradient(ellipse at 80% 80%, #0d1520 0%, transparent 60%);
+  }
+  header {
+    padding: 2rem 3rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    color: var(--accent);
+  }
+  nav a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.9rem;
+    margin-left: 2rem;
+    transition: color 0.2s;
+  }
+  nav a:hover { color: var(--accent); }
+
+  .container {
+    max-width: 1100px;
+    margin: 4rem auto;
+    padding: 0 2rem;
+  }
+  .page-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.4rem;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+background: linear-gradient(135deg, var(--accent), var(--accent2));
+background-clip: text;
+-webkit-background-clip: text;
+color: transparent;
+    -webkit-text-fill-color: transparent;
+  }
+  .page-sub { color: var(--muted); margin-bottom: 2.5rem; font-size: 0.95rem; }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .dress-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    position: relative;
+    transition: transform 0.25s, box-shadow 0.25s;
+    animation: fadeUp 0.5s ease both;
+  }
+  .dress-card:nth-child(1) { animation-delay: 0.05s; }
+  .dress-card:nth-child(2) { animation-delay: 0.1s; }
+  .dress-card:nth-child(3) { animation-delay: 0.15s; }
+  .dress-card:nth-child(4) { animation-delay: 0.2s; }
+  .dress-card:nth-child(5) { animation-delay: 0.25s; }
+  .dress-card:nth-child(6) { animation-delay: 0.3s; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .dress-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+    border-color: rgba(200,169,110,0.3);
+  }
+
+  /* Rank badge */
+  .rank-badge {
+    position: absolute;
+    top: 0.75rem;
+    left: 0.75rem;
+    background: rgba(14,14,17,0.85);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.2rem 0.5rem;
+    font-size: 0.75rem;
+    color: var(--accent);
+    font-weight: 600;
+    z-index: 2;
+  }
+  .rank-badge.top { border-color: var(--accent); background: rgba(200,169,110,0.15); }
+
+  .img-wrapper {
+    width: 100%;
+    aspect-ratio: 3/4;
+    overflow: hidden;
+    background: #111;
+    position: relative;
+  }
+  .img-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s;
+  }
+  .dress-card:hover .img-wrapper img { transform: scale(1.04); }
+
+  .no-image {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 4rem;
+    background: #1a1a20;
+    color: var(--muted);
+  }
+
+  /* Score bar */
+  .score-bar-wrap {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: rgba(255,255,255,0.05);
+  }
+  .score-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    transition: width 1s ease;
+  }
+
+  .card-body {
+    padding: 1rem 1.2rem 1.2rem;
+  }
+
+  .dress-type {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin-bottom: 0.3rem;
+  }
+  .dress-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem;
+    margin-bottom: 0.6rem;
+    color: var(--text);
+    text-transform: capitalize;
+  }
+
+  .color-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem;
+    margin-bottom: 0.75rem;
+  }
+  .chip {
+    font-size: 0.72rem;
+    padding: 0.2rem 0.55rem;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    text-transform: capitalize;
+  }
+
+  .score-line {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+  .score-val {
+    font-weight: 600;
+    color: var(--accent);
+    font-size: 0.9rem;
+  }
+
+  .delete-btn {
+    background: transparent;
+    border: 1px solid rgba(224,92,92,0.3);
+    color: var(--danger);
+    padding: 0.35rem 0.75rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.2s;
+  }
+  .delete-btn:hover {
+    background: rgba(224,92,92,0.1);
+    border-color: var(--danger);
+  }
+
+  .no-results {
+    text-align: center;
+    padding: 5rem 2rem;
+    color: var(--muted);
+  }
+  .no-results .big { font-size: 4rem; margin-bottom: 1rem; }
+  .no-results h3 { font-family: 'Playfair Display', serif; color: var(--text); margin-bottom: 0.5rem; }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--accent);
+    text-decoration: none;
+    font-size: 0.9rem;
+    margin-top: 2.5rem;
+    transition: gap 0.2s;
+  }
+  .back-link:hover { gap: 0.75rem; }
+
+  /* Toast */
+  #toast-container {
+    position: fixed;
+    top: 1.5rem;
+    right: 1.5rem;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .toast {
+    padding: 1rem 1.5rem;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    max-width: 380px;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    animation: slideIn 0.4s cubic-bezier(.175,.885,.32,1.275) forwards,
+               fadeOut 0.5s ease 3.5s forwards;
+    border-left: 4px solid;
+  }
+  .toast.info { background: #1a2030; border-color: var(--info); color: #90b8e6; }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(100px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes fadeOut {
+    from { opacity: 1; }
+    to   { opacity: 0; pointer-events: none; }
+  }
+</style>
+</head>
+<body>
+
+<div id="toast-container">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, message in messages %}
+    <div class="toast {{ category }}">
+      <span>ℹ</span>
+      <span>{{ message }}</span>
+    </div>
+    {% endfor %}
+  {% endwith %}
+</div>
+
+<header>
+  <h1>✦ Wardrobe AI</h1>
+  <nav>
+    <a href="/">Upload</a>
+    <a href="/mood">Recommendations</a>
+  </nav>
+</header>
+
+<div class="container">
+  <h2 class="page-title">Recommended Outfits</h2>
+  <p class="page-sub">Sorted by how well each outfit matches your mood, occasion, and wear type.</p>
+
+  {% if results %}
+  <div class="grid">
+    {% for dress, score in results %}
+    {% set max_score = 23 %}
+    {% set pct = [(score / max_score * 100), 100]|min %}
+    <div class="dress-card">
+      {% set top_score = results[0][1] %}
+<div class="rank-badge {% if loop.index == 1 and score == top_score and score > 0 %}top{% endif %}">
+  {% if loop.index == 1 and score == top_score and score > 0 %}
+    ⭐ Best Match
+  {% else %}
+    #{{ loop.index }}
+  {% endif %}
+</div>
+
+      <div class="img-wrapper">
+        {% if dress.image %}
+        <img src="{{ url_for('static', filename='uploads/' + dress.image) }}"
+               alt="{{ dress.dress_type }}"
+               onerror="this.parentElement.innerHTML='<div class=\'no-image\'>👗</div>'">
+        {% else %}
+          <div class="no-image">👗</div>
+        {% endif %}
+        <div class="score-bar-wrap">
+          <div class="score-bar" style="--w: {{ pct }}%"></div>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <div class="dress-type">{{ dress.wear_type }}</div>
+        <div class="dress-name">{{ dress.dress_type }}</div>
+
+        <div class="color-chips">
+          {% for c in dress.color.split(',') %}
+            <span class="chip">{{ c.strip() }}</span>
+          {% endfor %}
+        </div>
+
+        <div class="score-line">
+          <span>Match Score <span class="score-val">{{ score }}</span></span>
+          <form method="POST" action="/delete/{{ dress.id }}" style="display:inline;"
+                onsubmit="return confirm('Delete this outfit?')">
+            <button type="submit" class="delete-btn">Delete</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  {% else %}
+  <div class="no-results">
+    <div class="big">🔍</div>
+    <h3>No outfits found</h3>
+    <p>Upload some outfits first, then come back for recommendations.</p>
+  </div>
+  {% endif %}
+
+  <a href="/" class="back-link">← Upload More Outfits</a>
+</div>
+
+<script>
+setTimeout(() => {
+  document.querySelectorAll('.toast').forEach(t => t.remove());
+}, 4000);
+</script>
+</body>
+</html>

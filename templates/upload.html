@@ -1,0 +1,333 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wardrobe AI – Upload</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0e0e11;
+    --card: #17171c;
+    --border: #2a2a35;
+    --accent: #c8a96e;
+    --accent2: #e8c898;
+    --text: #f0ece4;
+    --muted: #888;
+    --success: #4caf7d;
+    --error: #e05c5c;
+    --info: #6e9fd4;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    background-image: radial-gradient(ellipse at 20% 20%, #1a1520 0%, transparent 60%),
+                      radial-gradient(ellipse at 80% 80%, #0d1520 0%, transparent 60%);
+  }
+  header {
+    padding: 2rem 3rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    color: var(--accent);
+    letter-spacing: 0.02em;
+  }
+  nav a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.9rem;
+    margin-left: 2rem;
+    transition: color 0.2s;
+  }
+  nav a:hover { color: var(--accent); }
+
+  .container {
+    max-width: 680px;
+    margin: 4rem auto;
+    padding: 0 2rem;
+  }
+  .page-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.4rem;
+    margin-bottom: 0.5rem;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+background-clip: text;
+-webkit-background-clip: text;
+color: transparent;
+    -webkit-text-fill-color: transparent;
+  }
+  .page-sub {
+    color: var(--muted);
+    font-size: 0.95rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2.5rem;
+  }
+
+  .drop-zone {
+    border: 2px dashed var(--border);
+    border-radius: 12px;
+    padding: 3rem 2rem;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+    margin-bottom: 1.5rem;
+  }
+  .drop-zone:hover, .drop-zone.dragover {
+    border-color: var(--accent);
+    background: rgba(200,169,110,0.05);
+  }
+  .drop-zone input[type=file] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+  }
+  .drop-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    display: block;
+  }
+  .drop-zone p { color: var(--muted); font-size: 0.9rem; }
+  .drop-zone strong { color: var(--accent); }
+
+  #preview-container {
+    display: none;
+    margin-top: 1rem;
+    text-align: center;
+  }
+  #preview-img {
+    max-height: 200px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    object-fit: cover;
+  }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .form-group label {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.5rem;
+  }
+  .form-group select {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    padding-right: 2.5rem;
+  }
+  .form-group select:focus { border-color: var(--accent); }
+
+  .btn-upload {
+    width: 100%;
+    padding: 1rem;
+    background: linear-gradient(135deg, var(--accent), #a07840);
+    color: #0e0e11;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    transition: opacity 0.2s, transform 0.1s;
+  }
+  .btn-upload:hover { opacity: 0.9; transform: translateY(-1px); }
+  .btn-upload:active { transform: translateY(0); }
+
+  .mood-link {
+    display: block;
+    text-align: center;
+    margin-top: 1.5rem;
+    color: var(--accent);
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
+  .mood-link:hover { text-decoration: underline; }
+
+  /* Toast notifications */
+  #toast-container {
+    position: fixed;
+    top: 1.5rem;
+    right: 1.5rem;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .toast {
+    padding: 1rem 1.5rem;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    max-width: 380px;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    animation: slideIn 0.4s cubic-bezier(.175,.885,.32,1.275) forwards,
+               fadeOut 0.5s ease 3.5s forwards;
+    border-left: 4px solid;
+  }
+  .toast.success { background: #1a2e22; border-color: var(--success); color: #90e6b4; }
+  .toast.error   { background: #2e1a1a; border-color: var(--error); color: #f09090; }
+  .toast.info    { background: #1a2030; border-color: var(--info); color: #90b8e6; }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(100px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes fadeOut {
+    from { opacity: 1; transform: translateX(0); }
+    to   { opacity: 0; transform: translateX(100px); }
+  }
+</style>
+</head>
+<body>
+
+<div id="toast-container">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, message in messages %}
+    <div class="toast {{ category }}">
+      <span>{% if category == 'success' %}✓{% elif category == 'error' %}✕{% else %}ℹ{% endif %}</span>
+      <span>{{ message }}</span>
+    </div>
+    {% endfor %}
+  {% endwith %}
+</div>
+
+<header>
+  <h1>✦ Wardrobe AI</h1>
+  <nav>
+    <a href="/">Upload</a>
+    <a href="/mood">Get Recommendations</a>
+  </nav>
+</header>
+
+<div class="container">
+  <h2 class="page-title">Add to Wardrobe</h2>
+  <p class="page-sub">Upload your outfit and let AI detect the colors automatically.</p>
+
+  <div class="card">
+    <form method="POST" enctype="multipart/form-data">
+      <div class="drop-zone" id="dropZone">
+        <input type="file" name="image" id="imageInput" accept="image/*" required>
+        <span class="drop-icon">👗</span>
+        <p><strong>Drop image here</strong> or click to browse</p>
+        <p style="font-size:0.8rem; margin-top:0.3rem;">JPG, PNG, WEBP supported</p>
+      </div>
+
+      <div id="preview-container">
+        <img id="preview-img" src="" alt="Preview">
+        <p style="color: var(--muted); font-size:0.8rem; margin-top:0.5rem;" id="file-name"></p>
+      </div>
+
+      <div class="form-row" style="margin-top: 1.5rem;">
+        <div class="form-group">
+          <label>Wear Type</label>
+          <select name="wear_type" required>
+            <option value="">Select...</option>
+            <option value="topwear">Topwear</option>
+            <option value="bottomwear">Bottomwear</option>
+            <option value="fullbody">Full Body / Dress</option>
+            <option value="outerwear">Outerwear</option>
+            <option value="footwear">Footwear</option>
+            <option value="accessory">Accessory</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Occasion / Type</label>
+          <select name="dress_type" required>
+            <option value="">Select...</option>
+            <option value="casual">Casual</option>
+            <option value="formal">Formal</option>
+            <option value="party">Party</option>
+            <option value="business">Business</option>
+            <option value="ethnic">Ethnic</option>
+            <option value="streetwear">Streetwear</option>
+            <option value="sportswear">Sportswear</option>
+          </select>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-upload">Upload & Analyze Colors →</button>
+    </form>
+
+    <a href="/mood" class="mood-link">→ Go to Recommendations</a>
+  </div>
+</div>
+
+<script>
+const input = document.getElementById('imageInput');
+const preview = document.getElementById('preview-img');
+const previewContainer = document.getElementById('preview-container');
+const fileName = document.getElementById('file-name');
+const dropZone = document.getElementById('dropZone');
+
+input.addEventListener('change', () => {
+  const file = input.files[0];
+  if (file) {
+    preview.src = URL.createObjectURL(file);
+    previewContainer.style.display = 'block';
+    fileName.textContent = file.name;
+  }
+});
+
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault();
+  dropZone.classList.remove('dragover');
+  const file = e.dataTransfer.files[0];
+  if (file) {
+    const dt = new DataTransfer();
+    dt.items.add(file);
+    input.files = dt.files;
+    preview.src = URL.createObjectURL(file);
+    previewContainer.style.display = 'block';
+    fileName.textContent = file.name;
+  }
+});
+
+// Auto-dismiss toasts
+setTimeout(() => {
+  document.querySelectorAll('.toast').forEach(t => t.remove());
+}, 4000);
+</script>
+</body>
+</html>
