@@ -58,22 +58,3 @@ Each user gets their **own wardrobe space**, ensuring privacy and personalized s
 
 
 
-## 📂 Project Structure  
-dressify/
-│
-├── app.py
-├── requirements.txt
-├── Dockerfile
-│
-├── ml/
-│ ├── color_detector.py
-│ └── recommender.py
-│
-├── static/
-│ ├── style.css
-│ └── uploads/
-│
-└── templates/
-├── upload.html
-├── select_mood.html
-└── result.html
